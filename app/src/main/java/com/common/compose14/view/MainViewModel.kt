@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.biubiu.eventbus.observe.observeEvent
 import com.common.compose14.common.event.AppMoveEvent
-import com.common.compose14.common.event.AppScopeEvent
 
 class MainViewModel:ViewModel() {
     init {

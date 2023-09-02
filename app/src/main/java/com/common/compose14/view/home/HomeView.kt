@@ -230,7 +230,12 @@ fun HomeSearch() {
             .padding(horizontal = 15.dp, vertical = 12.dp)
             .background(Gray4, CircleShape)
             .height(40.dp)
-            .fillMaxWidth()
+            .fillMaxWidth() .clickable(
+                onClick = { postEvent(AppScopeEvent(0)) },
+                indication = null,
+                interactionSource = remember {
+                    MutableInteractionSource()
+                })
     ) {
         Row(
             Modifier
@@ -287,7 +292,8 @@ fun GridsItem(itemData: HomeBean.Grid,index: Int) {
         Modifier
             .padding(horizontal = 5.dp)
             .fillMaxHeight()
-            .width(55.dp).clickable {
+            .width(55.dp)
+            .clickable {
                 postEvent(AppMoveEvent(index))
             },
         horizontalAlignment = Alignment.CenterHorizontally

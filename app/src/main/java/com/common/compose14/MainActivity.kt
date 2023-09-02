@@ -21,25 +21,20 @@ import com.biubiu.eventbus.observe.observeEvent
 import com.common.compose14.common.event.AppScopeEvent
 import com.common.compose14.ui.theme.Compose14Theme
 import com.common.compose14.view.MainView
+import com.common.compose14.view.search.SearchView
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        //关键代码,沉浸
-//        WindowCompat.setDecorFitsSystemWindows(window, false)
-//
-//
-//        val windowInsetsController =
-//            WindowCompat.getInsetsController(window, window.decorView)
 
         makeStatusBarTransparent()
-
 
         moveTo()
         setContent {
             Compose14Theme {
-                MainView()
+//                MainView()
+                SearchView()
             }
         }
     }
@@ -47,9 +42,19 @@ class MainActivity : ComponentActivity() {
 
     fun moveTo() {
         observeEvent<AppScopeEvent> {
-            val intent = Intent(this, DetailsActivity::class.java)
-            intent.putExtra("id", it.toString())
-            startActivity(intent, null)
+
+            when (it.tag) {
+                0->{
+                    val intent = Intent(this, SearchActivity::class.java)
+                    startActivity(intent, null)
+                }
+                else->{
+                    val intent = Intent(this, DetailsActivity::class.java)
+                    intent.putExtra("id", it.toString())
+                    startActivity(intent, null)
+                }
+            }
+
         }
     }
 

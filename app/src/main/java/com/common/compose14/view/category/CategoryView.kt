@@ -57,7 +57,6 @@ import com.biubiu.eventbus.observe.observeEvent
 import com.common.compose14.R
 import com.common.compose14.bean.CategoryBean
 import com.common.compose14.bean.CategoryContentBean
-import com.common.compose14.common.event.AppScopeEvent
 import com.common.compose14.ui.theme.CommonBg
 import com.common.compose14.ui.theme.Gray1
 import com.common.compose14.ui.theme.Gray2
