@@ -33,8 +33,8 @@ class MainActivity : ComponentActivity() {
         moveTo()
         setContent {
             Compose14Theme {
-//                MainView()
-                SearchView()
+                MainView()
+//                SearchView()
             }
         }
     }
