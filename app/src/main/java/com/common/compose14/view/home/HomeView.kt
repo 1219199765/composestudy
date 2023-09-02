@@ -99,7 +99,6 @@ var LocalViewModel = compositionLocalOf { HomeViewModel() }
 fun HomeView(viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
 
 
-
     val scope = rememberCoroutineScope()
     initData(viewModel, scope)
 
@@ -230,7 +229,8 @@ fun HomeSearch() {
             .padding(horizontal = 15.dp, vertical = 12.dp)
             .background(Gray4, CircleShape)
             .height(40.dp)
-            .fillMaxWidth() .clickable(
+            .fillMaxWidth()
+            .clickable(
                 onClick = { postEvent(AppScopeEvent(0)) },
                 indication = null,
                 interactionSource = remember {
@@ -281,13 +281,13 @@ fun HomeHorGrids() {
             .height(80.dp)
     ) {
         items(grids.size) {
-            GridsItem(itemData = grids[it],it)
+            GridsItem(itemData = grids[it], it)
         }
     }
 }
 
 @Composable
-fun GridsItem(itemData: HomeBean.Grid,index: Int) {
+fun GridsItem(itemData: HomeBean.Grid, index: Int) {
     Column(
         Modifier
             .padding(horizontal = 5.dp)
@@ -411,7 +411,7 @@ fun HomeHaoGood() {
     Row(
         modifier = Modifier
             .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-            .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
     ) {
         Column(
             modifier = Modifier
@@ -490,6 +490,7 @@ fun HomeHaoGood() {
 fun HomeCategory(onClick: (index: Int) -> Unit) {
     Row(
         Modifier
+            .background(Color.White)
             .padding(horizontal = 10.dp)
             .fillMaxWidth()
             .height(41.dp), horizontalArrangement = Arrangement.SpaceBetween
@@ -518,7 +519,6 @@ fun HomeCategory(onClick: (index: Int) -> Unit) {
                 Text(
                     text = "猜你喜欢",
                     style = MaterialTheme.typography.labelMedium.copy(if (LocalViewModel.current.categoryIndex == 0) Color.White else Gray3),
-                    modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
         }
@@ -667,7 +667,8 @@ fun HomeList() {
         verticalItemSpacing = 10.dp,
         // item 和 item 之间的横向间距
         horizontalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.height(height.dp), userScrollEnabled = false
+        modifier = Modifier.height(height.dp),
+        userScrollEnabled = false
     ) {
         data!!.forEachIndexed { index, result ->
             item {
@@ -687,7 +688,8 @@ fun HomeListItem(itemData: HomeBean.Vegetable) {
             .wrapContentHeight()
             .background(
                 Color.White
-            ).clickable {
+            )
+            .clickable {
                 postEvent(AppScopeEvent(itemData.goodsId))
             }
     ) {
@@ -707,7 +709,8 @@ fun HomeListItem(itemData: HomeBean.Vegetable) {
         Row(
             Modifier
                 .padding(10.dp)
-                .fillMaxWidth()) {
+                .fillMaxWidth()
+        ) {
             Text(
                 text = "特价", style = MaterialTheme.typography.labelSmall.copy(Red1),
                 modifier = Modifier
@@ -719,7 +722,8 @@ fun HomeListItem(itemData: HomeBean.Vegetable) {
             )
             Spacer(modifier = Modifier.width(7.dp))
             Text(
-                text = "24H发货", style = MaterialTheme.typography.labelSmall.copy(MaterialTheme.colorScheme.primary),
+                text = "24H发货",
+                style = MaterialTheme.typography.labelSmall.copy(MaterialTheme.colorScheme.primary),
                 modifier = Modifier
                     .border(
                         border = BorderStroke(
@@ -732,16 +736,22 @@ fun HomeListItem(itemData: HomeBean.Vegetable) {
             )
         }
 
-        Row(modifier = Modifier
-            .padding(start = 10.dp, end = 10.dp, bottom = 15.dp)
-            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .padding(start = 10.dp, end = 10.dp, bottom = 15.dp)
+                .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = "￥", style = MaterialTheme.typography.labelSmall.copy(Red1),
 
-            )
+                )
 
             Text(
-                text = ((itemData.goodsPrice)/100).toString(), style = MaterialTheme.typography.bodyMedium.copy(Red1, fontWeight = FontWeight.Bold),
+                text = ((itemData.goodsPrice) / 100).toString(),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    Red1,
+                    fontWeight = FontWeight.Bold
+                ),
 
                 )
             Text(
