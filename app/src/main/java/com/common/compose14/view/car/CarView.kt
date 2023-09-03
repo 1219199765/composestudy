@@ -1,8 +1,13 @@
 package com.common.compose14.view.car
 
+import CommonLoading
+import HomeViewRoot
+import LocalViewModel
+import LogUtils
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,12 +25,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,8 +50,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.common.compose14.R
+import com.common.compose14.bean.CarBean
+import com.common.compose14.common.room.Search
 import com.common.compose14.ui.theme.CommonBg
 import com.common.compose14.ui.theme.Gray1
 import com.common.compose14.ui.theme.Gray2
@@ -51,14 +62,19 @@ import com.common.compose14.ui.theme.Gray3
 import com.common.compose14.ui.theme.Gray4
 import com.common.compose14.ui.theme.Gray6
 import com.common.compose14.ui.theme.Red1
+import com.common.compose14.view.home.HomeViewModel
+
+
+
 
 @Composable
-fun CarView() {
-    CarViewRoot()
+fun CarView(viewModel: CarViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+    viewModel.dispatch(CarIntent.RequestCarList)
+    CarViewRoot(viewModel)
 }
 
 @Composable
-fun CarViewRoot() {
+fun CarViewRoot(viewModel: CarViewModel) {
     Column(
         Modifier
             .fillMaxSize()
@@ -66,8 +82,8 @@ fun CarViewRoot() {
             .statusBarsPadding()
     ) {
         CarTopBar()
-        CarList(modifier = Modifier.weight(1f))
-        CarBottomBar()
+        CarList(modifier = Modifier.weight(1f),viewModel)
+        CarBottomBar(viewModel)
     }
 }
 
@@ -90,17 +106,16 @@ fun CarTopBar() {
 }
 
 @Composable
-fun CarList(modifier: Modifier = Modifier) {
+fun CarList(modifier: Modifier = Modifier,viewModel: CarViewModel) {
     LazyColumn(modifier.fillMaxSize()) {
-        items(5) {
-            CarListItem()
+        items(viewModel.carList.size) {
+            CarListItem(it,viewModel)
         }
     }
 }
 
 @Composable
-fun CarListItem() {
-    var checkedState by remember { mutableStateOf(true) }
+fun CarListItem(index:Int,viewModel: CarViewModel) {
     Row(
         modifier = Modifier
             .padding(horizontal = 10.dp, vertical = 5.dp)
@@ -112,9 +127,9 @@ fun CarListItem() {
             .padding(10.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
-            modifier = Modifier.size(20.dp), checked = checkedState,
+            modifier = Modifier.size(20.dp), checked = viewModel.carList[index].isChecked,
             onCheckedChange = {
-                checkedState = it
+               viewModel.dispatch(CarIntent.RequestChecked(index))
             },
             colors = CheckboxDefaults.colors(
                 checkedColor = MaterialTheme.colorScheme.primary,
@@ -172,23 +187,26 @@ fun CarListItem() {
                 textDecoration = TextDecoration.LineThrough
             )
 
-            Row {
+            Row() {
                 Text(
-                    text = "￥", style = MaterialTheme.typography.labelSmall.copy(Red1),
+                    text = "￥", style = MaterialTheme.typography.labelSmall.copy(Red1),  modifier = Modifier.alignByBaseline()
                 )
                 Text(
-                    text = "39.9",
+                    text = viewModel.carList[index].price.toString(),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         Red1,
                         fontWeight = FontWeight.Bold
-                    ),
+                    ),  modifier = Modifier.alignByBaseline()
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(22.dp)
-                        .background(Gray4), contentAlignment = Alignment.Center
+                        .background(Gray4).clickable {
+                            if (viewModel.carList[index].num == 1){ return@clickable}
+                            viewModel.dispatch(CarIntent.RequestAddOrRemoveNum(false,index))
+                        }, contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Clear, contentDescription = null,
@@ -196,14 +214,16 @@ fun CarListItem() {
                     )
                 }
                 Text(
-                    text = "1", style = MaterialTheme.typography.bodySmall.copy(Gray1),
+                    text = viewModel.carList[index].num.toString(), style = MaterialTheme.typography.bodySmall.copy(Gray1),
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(22.dp)
-                        .background(Gray4), contentAlignment = Alignment.Center
+                        .background(Gray4).clickable {
+                                                     viewModel.dispatch(CarIntent.RequestAddOrRemoveNum(true,index))
+                        }, contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Add, contentDescription = null,
@@ -216,8 +236,7 @@ fun CarListItem() {
 }
 
 @Composable
-fun CarBottomBar() {
-    var checkedState by remember { mutableStateOf(true) }
+fun CarBottomBar(viewModel: CarViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -228,9 +247,9 @@ fun CarBottomBar() {
         Checkbox(
             modifier = Modifier
                 .padding(end = 10.dp)
-                .size(20.dp), checked = checkedState,
+                .size(20.dp), checked = viewModel.allChecked,
             onCheckedChange = {
-                checkedState = it
+                viewModel.dispatch(CarIntent.RequestAllChecked)
             },
             colors = CheckboxDefaults.colors(
                 checkedColor = MaterialTheme.colorScheme.primary,
@@ -240,7 +259,7 @@ fun CarBottomBar() {
         Text(text = "全选", style = MaterialTheme.typography.labelMedium.copy(Gray1))
         Spacer(modifier = Modifier.weight(1f))
         Text(text = "合计：  ￥", style = MaterialTheme.typography.labelMedium.copy(Gray1))
-        Text(text = "79.8", style = MaterialTheme.typography.bodyMedium.copy(Gray1))
+        Text(text = viewModel.allPrice.toString(), style = MaterialTheme.typography.bodyMedium.copy(Gray1))
         Box(
             modifier = Modifier
                 .padding(start = 15.dp)

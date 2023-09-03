@@ -61,7 +61,6 @@ class MainActivity : ComponentActivity() {
 
 }
 
-
 @Suppress("DEPRECATION")
 fun Activity.makeStatusBarTransparent() {
     window.apply {
