@@ -1,10 +1,8 @@
 package com.common.compose14.view.car
 
-import CommonLoading
-import HomeViewRoot
-import LocalViewModel
-import LogUtils
+import CommonPayDialog
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,49 +20,43 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ListItem
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material3.Button
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.common.compose14.R
-import com.common.compose14.bean.CarBean
-import com.common.compose14.common.room.Search
 import com.common.compose14.ui.theme.CommonBg
 import com.common.compose14.ui.theme.Gray1
 import com.common.compose14.ui.theme.Gray2
 import com.common.compose14.ui.theme.Gray3
 import com.common.compose14.ui.theme.Gray4
-import com.common.compose14.ui.theme.Gray6
 import com.common.compose14.ui.theme.Red1
-import com.common.compose14.view.home.HomeViewModel
-
-
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -73,17 +65,28 @@ fun CarView(viewModel: CarViewModel = androidx.lifecycle.viewmodel.compose.viewM
     CarViewRoot(viewModel)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CarViewRoot(viewModel: CarViewModel) {
-    Column(
-        Modifier
-            .fillMaxSize()
-            .background(CommonBg)
-            .statusBarsPadding()
+    val state = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+
+    ModalBottomSheetLayout(
+        sheetState = state,
+        sheetShape = RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp),
+        sheetContent = {
+            CarBottomPayDialog()
+        }
     ) {
-        CarTopBar()
-        CarList(modifier = Modifier.weight(1f),viewModel)
-        CarBottomBar(viewModel)
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(CommonBg)
+                .statusBarsPadding()
+        ) {
+            CarTopBar()
+            CarList(modifier = Modifier.weight(1f),viewModel)
+            CarBottomBar(viewModel,state)
+        }
     }
 }
 
@@ -203,9 +206,12 @@ fun CarListItem(index:Int,viewModel: CarViewModel) {
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(22.dp)
-                        .background(Gray4).clickable {
-                            if (viewModel.carList[index].num == 1){ return@clickable}
-                            viewModel.dispatch(CarIntent.RequestAddOrRemoveNum(false,index))
+                        .background(Gray4)
+                        .clickable {
+                            if (viewModel.carList[index].num == 1) {
+                                return@clickable
+                            }
+                            viewModel.dispatch(CarIntent.RequestAddOrRemoveNum(false, index))
                         }, contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -221,8 +227,9 @@ fun CarListItem(index:Int,viewModel: CarViewModel) {
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(22.dp)
-                        .background(Gray4).clickable {
-                                                     viewModel.dispatch(CarIntent.RequestAddOrRemoveNum(true,index))
+                        .background(Gray4)
+                        .clickable {
+                            viewModel.dispatch(CarIntent.RequestAddOrRemoveNum(true, index))
                         }, contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -235,8 +242,10 @@ fun CarListItem(index:Int,viewModel: CarViewModel) {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CarBottomBar(viewModel: CarViewModel) {
+fun CarBottomBar(viewModel: CarViewModel, state: ModalBottomSheetState) {
+    val scope = rememberCoroutineScope()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -266,10 +275,45 @@ fun CarBottomBar(viewModel: CarViewModel) {
                 .clip(CircleShape)
                 .width(89.dp)
                 .height(35.dp)
-                .background(MaterialTheme.colorScheme.primary), contentAlignment = Alignment.Center
+                .background(MaterialTheme.colorScheme.primary)
+                .clickable {
+                    scope.launch {
+                        state.show()
+                    }
+                }, contentAlignment = Alignment.Center
         ){
             Text(text = "去结算", style = MaterialTheme.typography.labelLarge.copy(White))
         }
     }
 }
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun CarBottomPayDialog() {
+    Column{
+        ListItem(
+            text = { Text("选择支付方式") }
+        )
+        ListItem(
+            text = { Text("支付宝") },
+            icon = {
+                Image(painter = painterResource(id = R.drawable.pay1), contentDescription = null,
+                    modifier = Modifier.size(80.dp))
+            },
+            modifier = Modifier.clickable {  }
+        )
+
+        ListItem(
+            text = { Text("微信") },
+            icon = {
+                Image(painter = painterResource(id = R.drawable.pay2), contentDescription = null,
+                    modifier = Modifier.size(80.dp))
+            },
+            modifier = Modifier.clickable {  }
+        )
+    }
+
+}
+
+
 

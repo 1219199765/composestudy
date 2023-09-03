@@ -21,6 +21,7 @@ import com.biubiu.eventbus.observe.observeEvent
 import com.common.compose14.common.event.AppScopeEvent
 import com.common.compose14.ui.theme.Compose14Theme
 import com.common.compose14.view.MainView
+import com.common.compose14.view.car.CarView
 import com.common.compose14.view.search.SearchView
 
 
@@ -33,8 +34,9 @@ class MainActivity : ComponentActivity() {
         moveTo()
         setContent {
             Compose14Theme {
-                MainView()
+//                MainView()
 //                SearchView()
+                CarView()
             }
         }
     }

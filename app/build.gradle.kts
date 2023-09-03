@@ -122,5 +122,8 @@ dependencies {
 //    kapt("androidx.room:room-compiler:$room_version")
     // To use Kotlin Symbol Processing (KSP)
     ksp("androidx.room:room-compiler:$room_version")
+
+    //某些情况下需要使用materia中的控件
+    implementation ("androidx.compose.material:material:1.5.0")
 }
 
