@@ -62,7 +62,7 @@ class CarViewModel: ViewModel() {
     val carList = mutableStateListOf<CarBean>()
     var allPrice by mutableStateOf(0)
     var allChecked by mutableStateOf(false)
-
+    var bottomDialog by mutableStateOf(false)
      private fun requestCarList(){
         viewModelScope.launch {
             val list = mutableListOf(CarBean("20"),CarBean("20"),CarBean("20"),CarBean("20"),CarBean("20"),)

@@ -1,11 +1,13 @@
 package com.common.compose14.view.car
 
+import BottomSheetDialog
 import CommonPayDialog
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,9 +38,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -65,18 +69,10 @@ fun CarView(viewModel: CarViewModel = androidx.lifecycle.viewmodel.compose.viewM
     CarViewRoot(viewModel)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CarViewRoot(viewModel: CarViewModel) {
-    val state = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-
-    ModalBottomSheetLayout(
-        sheetState = state,
-        sheetShape = RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp),
-        sheetContent = {
-            CarBottomPayDialog()
-        }
-    ) {
+    Box(modifier = Modifier.fillMaxSize())
+    {
         Column(
             Modifier
                 .fillMaxSize()
@@ -84,9 +80,10 @@ fun CarViewRoot(viewModel: CarViewModel) {
                 .statusBarsPadding()
         ) {
             CarTopBar()
-            CarList(modifier = Modifier.weight(1f),viewModel)
-            CarBottomBar(viewModel,state)
+            CarList(modifier = Modifier.weight(1f), viewModel)
+            CarBottomBar(viewModel)
         }
+        CarBottomPayDialog(viewModel)
     }
 }
 
@@ -109,16 +106,16 @@ fun CarTopBar() {
 }
 
 @Composable
-fun CarList(modifier: Modifier = Modifier,viewModel: CarViewModel) {
+fun CarList(modifier: Modifier = Modifier, viewModel: CarViewModel) {
     LazyColumn(modifier.fillMaxSize()) {
         items(viewModel.carList.size) {
-            CarListItem(it,viewModel)
+            CarListItem(it, viewModel)
         }
     }
 }
 
 @Composable
-fun CarListItem(index:Int,viewModel: CarViewModel) {
+fun CarListItem(index: Int, viewModel: CarViewModel) {
     Row(
         modifier = Modifier
             .padding(horizontal = 10.dp, vertical = 5.dp)
@@ -132,7 +129,7 @@ fun CarListItem(index:Int,viewModel: CarViewModel) {
         Checkbox(
             modifier = Modifier.size(20.dp), checked = viewModel.carList[index].isChecked,
             onCheckedChange = {
-               viewModel.dispatch(CarIntent.RequestChecked(index))
+                viewModel.dispatch(CarIntent.RequestChecked(index))
             },
             colors = CheckboxDefaults.colors(
                 checkedColor = MaterialTheme.colorScheme.primary,
@@ -192,14 +189,16 @@ fun CarListItem(index:Int,viewModel: CarViewModel) {
 
             Row() {
                 Text(
-                    text = "￥", style = MaterialTheme.typography.labelSmall.copy(Red1),  modifier = Modifier.alignByBaseline()
+                    text = "￥",
+                    style = MaterialTheme.typography.labelSmall.copy(Red1),
+                    modifier = Modifier.alignByBaseline()
                 )
                 Text(
                     text = viewModel.carList[index].price.toString(),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         Red1,
                         fontWeight = FontWeight.Bold
-                    ),  modifier = Modifier.alignByBaseline()
+                    ), modifier = Modifier.alignByBaseline()
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Box(
@@ -220,7 +219,8 @@ fun CarListItem(index:Int,viewModel: CarViewModel) {
                     )
                 }
                 Text(
-                    text = viewModel.carList[index].num.toString(), style = MaterialTheme.typography.bodySmall.copy(Gray1),
+                    text = viewModel.carList[index].num.toString(),
+                    style = MaterialTheme.typography.bodySmall.copy(Gray1),
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
                 Box(
@@ -242,9 +242,8 @@ fun CarListItem(index:Int,viewModel: CarViewModel) {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CarBottomBar(viewModel: CarViewModel, state: ModalBottomSheetState) {
+fun CarBottomBar(viewModel: CarViewModel) {
     val scope = rememberCoroutineScope()
     Row(
         modifier = Modifier
@@ -256,7 +255,8 @@ fun CarBottomBar(viewModel: CarViewModel, state: ModalBottomSheetState) {
         Checkbox(
             modifier = Modifier
                 .padding(end = 10.dp)
-                .size(20.dp), checked = viewModel.allChecked,
+                .size(20.dp),
+            checked = viewModel.allChecked,
             onCheckedChange = {
                 viewModel.dispatch(CarIntent.RequestAllChecked)
             },
@@ -268,7 +268,10 @@ fun CarBottomBar(viewModel: CarViewModel, state: ModalBottomSheetState) {
         Text(text = "全选", style = MaterialTheme.typography.labelMedium.copy(Gray1))
         Spacer(modifier = Modifier.weight(1f))
         Text(text = "合计：  ￥", style = MaterialTheme.typography.labelMedium.copy(Gray1))
-        Text(text = viewModel.allPrice.toString(), style = MaterialTheme.typography.bodyMedium.copy(Gray1))
+        Text(
+            text = viewModel.allPrice.toString(),
+            style = MaterialTheme.typography.bodyMedium.copy(Gray1)
+        )
         Box(
             modifier = Modifier
                 .padding(start = 15.dp)
@@ -277,11 +280,9 @@ fun CarBottomBar(viewModel: CarViewModel, state: ModalBottomSheetState) {
                 .height(35.dp)
                 .background(MaterialTheme.colorScheme.primary)
                 .clickable {
-                    scope.launch {
-                        state.show()
-                    }
+                    viewModel.bottomDialog = true
                 }, contentAlignment = Alignment.Center
-        ){
+        ) {
             Text(text = "去结算", style = MaterialTheme.typography.labelLarge.copy(White))
         }
     }
@@ -289,28 +290,49 @@ fun CarBottomBar(viewModel: CarViewModel, state: ModalBottomSheetState) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CarBottomPayDialog() {
-    Column{
-        ListItem(
-            text = { Text("选择支付方式") }
-        )
-        ListItem(
-            text = { Text("支付宝") },
-            icon = {
-                Image(painter = painterResource(id = R.drawable.pay1), contentDescription = null,
-                    modifier = Modifier.size(50.dp))
-            },
-            modifier = Modifier.clickable {  }
-        )
+fun CarBottomPayDialog(viewModel: CarViewModel) {
+    BottomSheetDialog(
+        modifier = Modifier,
+        visible = viewModel.bottomDialog,
+        cancelable = false,
+        canceledOnTouchOutside = true,
+        onDismissRequest = {
+            viewModel.bottomDialog = false
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                .fillMaxWidth()
+                .background(
+                    White
+                )
+        ) {
+            ListItem(
+                text = { Text("选择支付方式") }
+            )
+            ListItem(
+                text = { Text("支付宝") },
+                icon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.pay1), contentDescription = null,
+                        modifier = Modifier.size(50.dp)
+                    )
+                },
+                modifier = Modifier.clickable { }
+            )
 
-        ListItem(
-            text = { Text("微信") },
-            icon = {
-                Image(painter = painterResource(id = R.drawable.pay2), contentDescription = null,
-                    modifier = Modifier.size(50.dp))
-            },
-            modifier = Modifier.clickable {  }
-        )
+            ListItem(
+                text = { Text("微信") },
+                icon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.pay2), contentDescription = null,
+                        modifier = Modifier.size(50.dp)
+                    )
+                },
+                modifier = Modifier.clickable { }
+            )
+        }
     }
 
 }
