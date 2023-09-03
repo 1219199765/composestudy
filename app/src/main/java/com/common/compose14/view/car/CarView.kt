@@ -298,7 +298,7 @@ fun CarBottomPayDialog() {
             text = { Text("支付宝") },
             icon = {
                 Image(painter = painterResource(id = R.drawable.pay1), contentDescription = null,
-                    modifier = Modifier.size(80.dp))
+                    modifier = Modifier.size(50.dp))
             },
             modifier = Modifier.clickable {  }
         )
@@ -307,7 +307,7 @@ fun CarBottomPayDialog() {
             text = { Text("微信") },
             icon = {
                 Image(painter = painterResource(id = R.drawable.pay2), contentDescription = null,
-                    modifier = Modifier.size(80.dp))
+                    modifier = Modifier.size(50.dp))
             },
             modifier = Modifier.clickable {  }
         )
