@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +43,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,14 +54,12 @@ import com.common.compose14.ui.theme.Gray1
 import com.common.compose14.ui.theme.Gray2
 import com.common.compose14.ui.theme.Gray3
 import com.common.compose14.ui.theme.Gray4
+import com.common.compose14.ui.theme.Gray5
 import com.common.compose14.ui.theme.Red1
 import com.common.compose14.ui.theme.Yellow1
 
 @Composable
 fun DetailsView(id: String) {
-//    val systemUiController = rememberSystemUiController()
-//    systemUiController.setSystemBarsColor(Color.White, false)
-//    systemUiController.setStatusBarColor(Color.Transparent, true)
     DetailsRoot()
 }
 
@@ -84,6 +84,7 @@ fun DetailsRoot() {
         DetailsItem3()
         DetailsItem4()
         DetailsItem6()
+        DetailsItem7()
         DetailsItem5()
     }
 }
@@ -377,33 +378,164 @@ fun DetailsItem6() {
 @Composable
 fun DetailsItem7() {
     Column(
-        modifier = Modifier
+        Modifier
             .padding(10.dp)
-            .fillMaxWidth()
-            .height(205.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(Color.White)
-            .padding(horizontal = 10.dp)
+            .fillMaxWidth()
+            .height(205.dp)
+            .padding(10.dp)
     ) {
-        Canvas(modifier = Modifier) {
-            var path = Path().apply {
-                moveTo(0f, 0f)
-                relativeLineTo(100.dp.toPx(), 0f)
-                relativeLineTo(0f, 100.dp.toPx())
-                relativeLineTo(-100.dp.toPx(), 0f)
-                close()
+        Text(text = "规格信息", fontSize = 13.sp, color = Gray1)
+        Spacer(modifier = Modifier.height(10.dp))
+        Column(
+            modifier = Modifier
+                .clip(
+                    RoundedCornerShape(
+                        10.dp
+                    )
+                )
+                .background(Gray5)
+                .fillMaxWidth()
+                .height(143.dp)
+                .padding(1.dp)
+        ) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .height(34.5.dp), verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(topStart = 10.dp))
+                        .fillMaxHeight()
+                        .width(142.dp)
+                        .background(Color(0xffF8F9FA)), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "产地",
+                        fontSize = 12.sp,
+                        color = Gray2, textAlign = TextAlign.Center,
+                    )
+                }
+                Spacer(modifier = Modifier.width(1.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(topEnd = 10.dp))
+                        .fillMaxSize()
+                        .background(Color.White), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "安徽",
+                        fontSize = 12.sp,
+                        color = Gray2, textAlign = TextAlign.Center,
+                    )
+                }
+
+            }
+            Spacer(modifier = Modifier.height(1.dp))
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .height(34.5.dp), verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(142.dp)
+                        .background(Color(0xffF8F9FA)), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "规格",
+                        fontSize = 12.sp,
+                        color = Gray2, textAlign = TextAlign.Center,
+                    )
+                }
+                Spacer(modifier = Modifier.width(1.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "180+/份",
+                        fontSize = 12.sp,
+                        color = Gray2, textAlign = TextAlign.Center,
+                    )
+                }
+
+            }
+            Spacer(modifier = Modifier.height(1.dp))
+
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .height(34.5.dp), verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(142.dp)
+                        .background(Color(0xffF8F9FA)), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "保质期",
+                        fontSize = 12.sp,
+                        color = Gray2, textAlign = TextAlign.Center,
+                    )
+                }
+                Spacer(modifier = Modifier.width(1.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "30天",
+                        fontSize = 12.sp,
+                        color = Gray2, textAlign = TextAlign.Center,
+                    )
+                }
+
+            }
+            Spacer(modifier = Modifier.height(1.dp))
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .height(34.5.dp), verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(bottomStart = 10.dp))
+                        .fillMaxHeight()
+                        .width(142.dp)
+                        .background(Color(0xffF8F9FA)), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "存储方式",
+                        fontSize = 12.sp,
+                        color = Gray2, textAlign = TextAlign.Center,
+                    )
+                }
+                Spacer(modifier = Modifier.width(1.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(bottomEnd = 10.dp))
+
+                        .fillMaxSize()
+                        .background(Color.White), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "冷藏",
+                        fontSize = 12.sp,
+                        color = Gray2, textAlign = TextAlign.Center,
+                    )
+                }
+
             }
 
-            drawPath(
-                path = path,
-                color = Red1,
-                style = Stroke(
-                    width = 10f,
-                )
-            )
-
         }
-
     }
 }
 

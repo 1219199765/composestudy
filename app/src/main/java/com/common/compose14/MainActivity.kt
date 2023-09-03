@@ -34,9 +34,9 @@ class MainActivity : ComponentActivity() {
         moveTo()
         setContent {
             Compose14Theme {
-//                MainView()
+                MainView()
 //                SearchView()
-                CarView()
+//                CarView()
             }
         }
     }
