@@ -1,5 +1,6 @@
 import com.common.compose14.bean.CategoryBean
 import com.common.compose14.bean.CategoryContentBean
+import com.common.compose14.bean.HomeBean
 import retrofit2.http.GET
 import retrofit2.http.QueryMap
 

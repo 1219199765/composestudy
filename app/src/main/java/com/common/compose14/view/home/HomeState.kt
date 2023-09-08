@@ -1,6 +1,7 @@
 package com.common.compose14.view.home
 
-import HomeBean
+import com.common.compose14.bean.HomeBean
+
 
 sealed class HomeState {
     object OnLoading:HomeState()

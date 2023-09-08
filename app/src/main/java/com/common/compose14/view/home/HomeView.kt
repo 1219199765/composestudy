@@ -64,6 +64,7 @@ import coil.compose.AsyncImage
 import com.biubiu.eventbus.post.postEvent
 import com.common.compose14.MoveIntent
 import com.common.compose14.R
+import com.common.compose14.bean.HomeBean
 import com.common.compose14.common.event.AppMoveEvent
 import com.common.compose14.common.event.AppScopeEvent
 import com.common.compose14.ui.theme.CommonBg

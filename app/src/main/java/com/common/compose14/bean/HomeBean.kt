@@ -1,9 +1,10 @@
+package com.common.compose14.bean
+
 data class HomeBean(
     val `data`: Data?=null,
     val msg: String?=null,
     val status: String?=null
 )
-
 {
     data class Data(
         val banner: List<Banner>,
@@ -40,12 +41,12 @@ data class HomeBean(
         val layoutId: Int
     )
 
-//    data class MeatLsit(
-//        val goodsId: Int,
-//        val goodsName: String,
-//        val goodsPrice: Int,
-//        val imageUrl: String
-//    )
+    data class MeatLsit(
+        val goodsId: Int,
+        val goodsName: String,
+        val goodsPrice: Int,
+        val imageUrl: String
+    )
 
     data class Vegetable(
         val goodsId: Int,

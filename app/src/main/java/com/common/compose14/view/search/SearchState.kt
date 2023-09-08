@@ -1,6 +1,5 @@
 package com.common.compose14.view.search
 
-import HomeBean
 import com.common.compose14.common.room.Search
 
 sealed class SearchState {

@@ -26,7 +26,7 @@ android {
     // 签名配置
     signingConfigs {
         create("release") {
-            storeFile = file("./keystore/huajianghusign")
+            storeFile = file("../huajianghusign")
             storePassword = "wdy110223"
             keyAlias = "hjhregister"
             keyPassword = "wdy110223n"
@@ -37,11 +37,12 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

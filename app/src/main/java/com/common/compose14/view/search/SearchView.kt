@@ -1,9 +1,5 @@
 package com.common.compose14.view.search
 
-import HomeBean
-import HomeViewRoot
-import LogUtils
-import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

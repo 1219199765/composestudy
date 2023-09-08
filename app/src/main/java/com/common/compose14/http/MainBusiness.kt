@@ -4,6 +4,7 @@
 import android.util.Log
 import com.common.compose14.bean.CategoryBean
 import com.common.compose14.bean.CategoryContentBean
+import com.common.compose14.bean.HomeBean
 import com.common.compose14.view.category.CategoryState
 import com.common.compose14.view.home.HomeState
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +24,7 @@ object MainBusiness {
     ): Flow<HomeState> {
         return flow<HomeState> {
             val result = request(MainService) ?: throw IllegalArgumentException("数据非法，获取响应数据为空")
+            LogUtils.d("结果===$result")
             emit(HomeState.RequestHomeSus(result))
         }.onStart {
             //在开始流之前调用的  例如开启loading
@@ -43,6 +45,7 @@ object MainBusiness {
     ): Flow<CategoryState> {
         return flow<CategoryState> {
             val result = request(MainService) ?: throw IllegalArgumentException("数据非法，获取响应数据为空")
+            LogUtils.d("结果2===$result")
             emit(CategoryState.RequestCategorySus(result))
         }.onStart {
             //在开始流之前调用的  例如开启loading

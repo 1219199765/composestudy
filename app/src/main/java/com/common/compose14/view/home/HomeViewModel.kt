@@ -1,5 +1,6 @@
 package com.common.compose14.view.home
 
+import LogUtils
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -57,6 +58,7 @@ class HomeViewModel : ViewModel() {
     private fun requestHome() {
         viewModelScope.launch {
             HomeRepository.requestHome().collect {
+                LogUtils.d("======$it")
                 _state.emit(it)
             }
         }
